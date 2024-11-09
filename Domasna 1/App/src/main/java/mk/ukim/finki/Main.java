@@ -52,6 +52,7 @@ public class Main {
         //Get all Issuers
         List<String> issuersList = getAllIssuers();
         System.out.println("Issuers: " + issuersList);
+        System.out.println(issuersList.size());
         System.out.println("------------------------------");
 
 
