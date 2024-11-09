@@ -153,7 +153,7 @@ public class Main {
 
     private void SaveData(String gsonStr) {
         try {
-            File file = new File("database");
+            File file = new File("../database");
             if (!file.exists())
                 file.mkdir();
 
