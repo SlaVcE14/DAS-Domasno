@@ -54,7 +54,11 @@ public class Main {
         System.out.println("Issuers: " + issuersList);
         System.out.println(issuersList.size());
         System.out.println("------------------------------");
-
+        for (String code : issuersList){
+            Issuer i = new Issuer(code);
+            if(!issuers.contains(i))
+                issuers.add(i);
+        }
 
         long start = System.currentTimeMillis();
 
