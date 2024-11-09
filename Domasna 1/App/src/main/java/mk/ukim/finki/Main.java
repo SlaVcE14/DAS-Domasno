@@ -73,7 +73,7 @@ public class Main {
                         issuer.stockDataList.addAll(getLastTenYears(code));
                     } else {
                         // Get new data if needed
-                        String date = issuer.getStockDataList().getFirst().getDate();
+                        String date = issuer.getStockDataList().get(0).getDate();
                         LocalDateTime localDateTime = LocalDateTime.now().minusDays(1);
 
                         int year = localDateTime.getYear();
@@ -153,11 +153,11 @@ public class Main {
 
     private void SaveData(String gsonStr) {
         try {
-            File file = new File("database");
+            File file = new File("../database");
             if (!file.exists())
                 file.mkdir();
 
-            BufferedWriter out = new BufferedWriter(new FileWriter("database/" + FILE_NAME));
+            BufferedWriter out = new BufferedWriter(new FileWriter("../database/" + FILE_NAME));
             out.write(gsonStr);
             out.close();
 
@@ -168,7 +168,7 @@ public class Main {
 
     private List<Issuer> ReadData(){
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("database/" + FILE_NAME));
+            BufferedReader reader = new BufferedReader(new FileReader("../database/" + FILE_NAME));
             StringBuilder builder = new StringBuilder();
             reader.lines().forEach(builder::append);
 
