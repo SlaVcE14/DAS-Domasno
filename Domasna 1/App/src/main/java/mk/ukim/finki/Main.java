@@ -73,7 +73,7 @@ public class Main {
                         issuer.stockDataList.addAll(getLastTenYears(code));
                     } else {
                         // Get new data if needed
-                        String date = issuer.getStockDataList().getFirst().getDate();
+                        String date = issuer.getStockDataList().get(0).getDate();
                         LocalDateTime localDateTime = LocalDateTime.now().minusDays(1);
 
                         int year = localDateTime.getYear();
