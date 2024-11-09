@@ -61,35 +61,53 @@ public class Main {
 
         long start = System.currentTimeMillis();
 
-        for (String code : issuersList){
 
-            Issuer issuer = getIssuer(code);
+        int cores = Runtime.getRuntime().availableProcessors();
 
-            if (issuer.getStockDataList().isEmpty()) {
-                //Get data 10 years back
-                System.out.println("Getting 10 years data for: " + code + "...");
-                issuer.stockDataList.addAll(getLastTenYears(code));
-                continue;
+        ExecutorService executor = Executors.newFixedThreadPool(cores); // Adjust thread pool size as needed
+
+        for (String code : issuersList) {
+            executor.submit(() -> {
+                try {
+                    Issuer issuer = getIssuer(code);
+
+                    if (issuer.getStockDataList().isEmpty()) {
+                        // Get data 10 years back
+                        System.out.println("Getting 10 years data for: " + code + "...");
+                        issuer.stockDataList.addAll(getLastTenYears(code));
+                    } else {
+                        // Get new data if needed
+                        String date = issuer.getStockDataList().getFirst().getDate();
+                        LocalDateTime localDateTime = LocalDateTime.now().minusDays(1);
+
+                        int year = localDateTime.getYear();
+                        int month = localDateTime.getMonthValue();
+                        int day = localDateTime.getDayOfMonth();
+
+                        LocalDateTime fromDate = LocalDateTime.parse(date + " 00:00:00", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")).plusDays(1);
+
+                        int fromYear = fromDate.getYear();
+                        int fromMonth = fromDate.getMonthValue();
+                        int fromDay = fromDate.getDayOfMonth();
+
+                        if (!String.format("%02d.%02d.%d", day, month, year).equals(date) && (month == fromMonth && day > fromDay)) {
+                            List<StockData> data = getData(code, String.format("FromDate=%d.%d.%d&ToDate=%d.%d.%d", fromDay, fromMonth, fromYear, day, month, year));
+                            issuer.getStockDataList().addAll(0, data); // Ensure no duplicates
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace(); // Handle exceptions for each task
+                }
+            });
+        }
+        
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(600, TimeUnit.SECONDS)) {
+                executor.shutdownNow();
             }
-
-            //Get new data if needed
-            String date = issuer.getStockDataList().getFirst().getDate();
-            LocalDateTime localDateTime = LocalDateTime.now().minusDays(1);
-
-            int year = localDateTime.getYear();
-            int month = localDateTime.getMonthValue();
-            int day = localDateTime.getDayOfMonth();
-
-            LocalDateTime fromDate = LocalDateTime.parse(date + " 00:00:00",DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")).plusDays(1);
-
-            int fromYear = fromDate.getYear();
-            int fromMonth = fromDate.getMonthValue();
-            int fromDay = fromDate.getDayOfMonth();
-
-            if (!String.format("%02d.%02d.%d",day,month,year).equals(date) && (month == fromMonth && day > fromDay)){
-                List<StockData> data = getData(code, String.format("FromDate=%d.%d.%d&ToDate=%d.%d.%d",fromDay,fromMonth,fromYear,day,month,year));
-                issuer.getStockDataList().addAll(0,data); //todo no duplicates
-            }
+        } catch (InterruptedException e) {
+            executor.shutdownNow();
         }
 
         String gsonStr = new Gson().newBuilder().setPrettyPrinting().create().toJson(issuers);
