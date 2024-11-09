@@ -157,7 +157,7 @@ public class Main {
             if (!file.exists())
                 file.mkdir();
 
-            BufferedWriter out = new BufferedWriter(new FileWriter("../database/" + FILE_NAME));
+            BufferedWriter out = new BufferedWriter(new FileWriter("database/" + FILE_NAME));
             out.write(gsonStr);
             out.close();
 
@@ -168,7 +168,7 @@ public class Main {
 
     private List<Issuer> ReadData(){
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("../database/" + FILE_NAME));
+            BufferedReader reader = new BufferedReader(new FileReader("database/" + FILE_NAME));
             StringBuilder builder = new StringBuilder();
             reader.lines().forEach(builder::append);
 
