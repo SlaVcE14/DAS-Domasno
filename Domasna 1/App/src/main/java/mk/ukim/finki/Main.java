@@ -17,15 +17,15 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Main {
     public static final String URL = "https://www.mse.mk/mk/stats/symbolhistory/";
+    public static final String URL_CODES = "https://www.mse.mk/en/stats/current-schedule";
     public static final String FILE_NAME = "data.json";
 
     List<Issuer> issuers = new ArrayList<>();
@@ -46,6 +46,7 @@ public class Main {
 
         }
         System.out.println("Total = " + total);
+        System.out.println("Total Issuers = " + issuers.size());
 
         System.out.println("------------------------------");
 
@@ -104,7 +105,7 @@ public class Main {
 
         executor.shutdown();
         try {
-            if (!executor.awaitTermination(600, TimeUnit.SECONDS)) {
+            if (!executor.awaitTermination(3600, TimeUnit.SECONDS)) {
                 executor.shutdownNow();
             }
         } catch (InterruptedException e) {
@@ -191,7 +192,7 @@ public class Main {
 
         List<StockData> dataList = new ArrayList<>();
 
-        String body = makeRequest(code + "?" + dateRange);
+        String body = makeRequestForData(code + "?" + dateRange);
 
         try {
             String tableHtml = body.substring(body.indexOf("<table"),body.indexOf("</table>")-8);
@@ -224,8 +225,11 @@ public class Main {
         return dataList;
     }
 
-    private static String makeRequest(String params) throws Exception {
-        String url = URL + params;
+    private static String makeRequestForData(String params) throws Exception {
+        return makeRequest(URL + params);
+    }
+
+    private static String makeRequest(String url) throws Exception {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
@@ -236,22 +240,50 @@ public class Main {
     }
 
     private List<String> getAllIssuers() throws Exception {
-        String res = makeRequest("get");
-        String options = res.substring(res.indexOf("name=\"Code\">")+ 12,res.indexOf("</select>"));
-
+        String res = makeRequestForData("get");
         List<String> optionsList = new ArrayList<>();
 
-        Pattern pattern = Pattern.compile("<option value=\"([^\"]+)\">[^<]+</option>");
-        Matcher matcher = pattern.matcher(options);
+        Document document = Jsoup.parse(res);
+        Elements options = document.select("select option");
 
-        while (matcher.find()) {
-            String s = matcher.group(1);
+        for (Element element : options){
+            String code = element.text();
+            if (!code.matches(".*\\d.*"))
+                optionsList.add(code);
+        }
 
-            if (!s.matches(".*\\d.*"))
-                optionsList.add(s);
+
+        if (optionsList.isEmpty()){
+            optionsList = getAllIssuersFromOtherSource();
         }
 
         return optionsList;
+    }
+
+    private List<String> getAllIssuersFromOtherSource() throws Exception {
+
+        String res = makeRequest(URL_CODES);
+
+        Document document = Jsoup.parse(res);
+
+        Elements tables = document.select("table");
+
+        List<String> codes = new ArrayList<>();
+
+        for (Element table : tables) {
+            Elements rows = table.select("tbody tr");
+            for (Element row : rows) {
+                Elements cols = row.select("td");
+
+                String code = cols.getFirst().text();
+                if (!code.matches(".*\\d.*"))
+                    codes.add(code);
+            }
+        }
+
+        Collections.sort(codes);
+
+        return codes;
     }
 
 }
