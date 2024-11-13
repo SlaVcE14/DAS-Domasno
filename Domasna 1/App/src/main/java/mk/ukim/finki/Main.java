@@ -92,7 +92,7 @@ public class Main {
                         int fromMonth = fromDate.getMonthValue();
                         int fromDay = fromDate.getDayOfMonth();
 
-                        if (!String.format("%02d.%02d.%d", day, month, year).equals(date) && (month == fromMonth && day > fromDay)) {
+                        if (!String.format("%02d.%02d.%d", day, month, year).equals(date) && (month == fromMonth && day >= fromDay)) {
                             List<StockData> data = getData(code, String.format("FromDate=%d.%d.%d&ToDate=%d.%d.%d", fromDay, fromMonth, fromYear, day, month, year));
                             issuer.getStockDataList().addAll(0, data);
                         }
