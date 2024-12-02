@@ -1,0 +1,17 @@
+package mk.finki.ukim.das.prototype.model;
+
+import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Data
+public class Issuer {
+    String code;
+    List<StockData> stockDataList = new ArrayList<>();
+
+    public Issuer(String code){
+        this.code = code;
+    }
+}
+
