@@ -13,6 +13,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -80,19 +81,19 @@ public class Main {
                     } else {
                         // Get new data if needed
                         String date = issuer.getStockDataList().get(0).getDate();
-                        LocalDateTime localDateTime = LocalDateTime.now().minusDays(1);
+                        LocalDate localDateTime = LocalDate.now().minusDays(1);
 
                         int year = localDateTime.getYear();
                         int month = localDateTime.getMonthValue();
                         int day = localDateTime.getDayOfMonth();
 
-                        LocalDateTime fromDate = LocalDateTime.parse(date + " 00:00:00", DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")).plusDays(1);
+                        LocalDate fromDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd.MM.yyyy")).plusDays(1);
 
                         int fromYear = fromDate.getYear();
                         int fromMonth = fromDate.getMonthValue();
                         int fromDay = fromDate.getDayOfMonth();
 
-                        if (!String.format("%02d.%02d.%d", day, month, year).equals(date) && (month == fromMonth && day >= fromDay)) {
+                        if (fromDate.isBefore(localDateTime)) {
                             List<StockData> data = getData(code, String.format("FromDate=%d.%d.%d&ToDate=%d.%d.%d", fromDay, fromMonth, fromYear, day, month, year));
                             issuer.getStockDataList().addAll(0, data);
                         }
