@@ -41,7 +41,21 @@
             flex-grow: 1;
         }
 
-        #issuersList a {
+        #periodList {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+        }
+        #periodList a {
+            padding: 10px 20px;
+            text-decoration: none;
+            color: black;
+            font-weight: bold;
+            border-radius: 20px;
+            transition: background 0.3s;
+        }
+
+        #issuersList a{
             display: block;
             padding: 10px 20px;
             margin-bottom: 10px;
@@ -52,49 +66,45 @@
             transition: background 0.3s;
         }
 
-        #issuersList a:hover {
+        #issuersList a:hover, #periodList a:hover{
             background: #a4a4a4;
+        }
+
+        #indicators div p span {
+            font-weight: bold;
         }
 
         .selected {
             background: #a4a4a4;
         }
 
-        .table-wrapper {
-            flex-grow: 1;
-            overflow: auto;
-            max-height: 79vh;
-            border-radius: 20px;
-            background: #ffffff;
+        .selected2 {
+            background: #D9D9D9;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            table-layout: fixed;
+        .buy {
+            color: green;
+        }
+        .sell {
+            color: red;
         }
 
-        thead {
-            background: #3A3A3A;
-            color: wheat;
-            position: sticky;
-            top: 0;
-            z-index: 1;
-        }
-
-        th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        tbody tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
         .flex {
             display: flex;
             flex-flow: column;
         }
+        .flexH {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px; /* Adds spacing between columns */
+            flex-wrap: wrap; /* Ensures content wraps on smaller screens */
+        }
+
+        .flexH.space {
+            justify-content: space-around; /* Optional, adjusts spacing differently */
+        }
+
         input {
             margin: 10px 15px;
             height: 35px;
@@ -118,6 +128,8 @@
         ::-webkit-scrollbar-thumb:hover{
             background: var(--nav-bg-color);
         }
+
+
     </style>
 </head>
 <body>
@@ -135,52 +147,83 @@
         </div>
 
     </div>
-    <div>
-        <div>
-            <a href="?period=1">1 day</a>
-            <a href="?period=7">1 week</a>
-            <a href="?period=30">1 month</a>
-        </div>
 
-    </div>
-
-    <div>
+    <div style="width: 100%">
 
         <div>
-
-            <div>
-                <p>Oscillator Signal</p>
-                <p th:text="${oscSignal}"></p>
+            <div id="periodList">
+                <a href="?period=1">1 day</a>
+                <a href="?period=7">1 week</a>
+                <a href="?period=30">1 month</a>
             </div>
 
-            <div>
-                <p>Moving Average Signal</p>
-                <p th:text="${maSignal}"></p>
-            </div>
         </div>
 
-        <br>
+        <div>
 
-        <p>RSI : <span th:text="${RSI}"></span></p>
-        <p>MACD : <span th:text="${MACD}"></span></p>
-        <p>Stochastic : <span th:text="${Stochastic}"></span></p>
-        <p>CCI : <span th:text="${CCI}"></span></p>
-        <p>Momentum : <span th:text="${Momentum}"></span></p>
-        <p>SMA : <span th:text="${SMA}"></span></p>
-        <p>EMA : <span th:text="${EMA}"></span></p>
-        <p>WMA : <span th:text="${WMA}"></span></p>
-        <p>HMA : <span th:text="${HMA}"></span></p>
-        <p>Envelopes : <span th:text="${Envelopes}"></span></p>
+            <div class="flexH">
+
+                <div style="padding: 50px">
+                    <p style="font-weight: bold">Oscillator Signal</p>
+                    <h2 class="signal" style="text-align: center" th:text="${oscSignal}"></h2>
+                </div>
+
+                <div style="padding: 50px">
+                    <p style="font-weight: bold">Moving Average Signal</p>
+                    <h2 class="signal" style="text-align: center" th:text="${maSignal}"></h2>
+                </div>
+            </div>
+
+            <br>
+
+            <div id="indicators" class="flexH space">
+                <div>
+                    <p>Relative Strength Index: <span th:text="${RSI}"></span></p>
+                    <p>Moving Average Convergence Divergence: <span th:text="${MACD}"></span></p>
+                    <p>Stochastic %K: <span th:text="${Stochastic}"></span></p>
+                    <p>Commodity Channel Index: <span th:text="${CCI}"></span></p>
+                    <p>Momentum Indicator: <span th:text="${Momentum}"></span></p>
+                </div>
+
+                <div>
+                    <p>Simple Moving Average: <span th:text="${SMA}"></span></p>
+                    <p>Exponential Moving Average: <span th:text="${EMA}"></span></p>
+                    <p>Weighted Moving Average: <span th:text="${WMA}"></span></p>
+                    <p>Hull Moving Average: <span th:text="${HMA}"></span></p>
+                    <p>Moving Average Envelopes : <span th:text="${Envelopes}"></span></p>
+                </div>
+
+            </div>
+
+
+
+        </div>
     </div>
-
-
-
 
 </main>
 
 <script>
     const code = document.getElementById("issuerCode")?.innerHTML;
     const issuersList = document.getElementById("issuersList").children;
+    const periodList = document.getElementById("periodList").children;
+    const signals = document.getElementsByClassName("signal");
+
+    const urlParams = new URLSearchParams(window.location.search);
+    let period = urlParams.get('period');
+    if (period == null)
+        period = "1";
+
+    switch (period){
+        case "1":
+            periodList[0].classList.add("selected2")
+            break;
+        case "7":
+            periodList[1].classList.add("selected2")
+            break;
+        case "30":
+            periodList[2].classList.add("selected2")
+            break;
+    }
 
     for (let issuer of issuersList) {
         if (issuer.innerHTML === code) {
@@ -191,6 +234,15 @@
             break;
         }
     }
+
+
+    for (let s of  signals){
+        if (s.innerHTML === "Sell")
+            s.classList.add("sell")
+        else if (s.innerHTML === "Buy")
+            s.classList.add("buy")
+    }
+
 
     function isElementInViewport(el) {
         const rect = el.getBoundingClientRect();
@@ -209,7 +261,6 @@
     flatpickr("#toDate", {
         dateFormat: "d.m.Y",
     });
-
 </script>
 </body>
 </html>
