@@ -104,7 +104,7 @@ public class functions {
 
 
 
-    //MACD TODO
+    //MACD
     public static Double[] calculateMACD(List<Double> closingPrices, int shortPeriod, int longPeriod, int signalPeriod) {
         if (closingPrices == null || closingPrices.size() < longPeriod || closingPrices.contains(null)) {
             return null;
@@ -126,7 +126,7 @@ public class functions {
 
 
 
-    //Stochastic Oscillator TODO
+    //Stochastic Oscillator
     public static Double calculateStochastic(List<Double> closingPrices, List<Double> highs, List<Double> lows, int period) {
         if (closingPrices == null || highs == null || lows == null || closingPrices.size() < period
                 || highs.size() < period || lows.size() < period || closingPrices.contains(null)
@@ -144,7 +144,7 @@ public class functions {
     }
 
 
-    //CCI TODO
+    //CCI
     public static Double calculateCCI(List<Double> closingPrices, List<Double> highs, List<Double> lows, int period) {
         if (closingPrices == null || highs == null || lows == null || closingPrices.size() < period
                 || highs.size() < period || lows.size() < period || closingPrices.contains(null)
@@ -177,7 +177,7 @@ public class functions {
     }
 
 
-    //Momentum Indicator TODO
+    //Momentum Indicator
     public static Double calculateMomentum(List<Double> closingPrices, int period) {
         if (closingPrices == null || closingPrices.size() < period || closingPrices.contains(null)) return null;
         double currentPrice = closingPrices.get(closingPrices.size() - 1);
@@ -209,7 +209,7 @@ public class functions {
     }
 
 
-    //WMA TODO
+    //WMA
     public static Double calculateWMA(List<Double> prices, int period) {
         if (prices == null || prices.size() < period || prices.contains(null)) return null;
         int weightSum = (period * (period + 1)) / 2;
@@ -221,7 +221,7 @@ public class functions {
     }
 
 
-    //Hull Moving Average (HMA) TODO
+    //Hull Moving Average (HMA)
     public static Double calculateHMA(List<Double> prices, int period) {
         if (prices == null || prices.size() < period || prices.contains(null)) return null;
 
@@ -251,7 +251,7 @@ public class functions {
         return round(Math.sqrt(Math.abs(weightedHMA)));
     }
 
-    //Moving Average Envelopes TODO
+    //Moving Average Envelopes
     public static Double[] calculateEnvelopes(List<Double> prices, int period, double percentage) {
         if (prices == null || prices.size() < period || prices.contains(null)) return null;
         Double sma = calculateSMA(prices, period);

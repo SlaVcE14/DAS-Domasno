@@ -39,7 +39,7 @@ public class TechnicalAnalysis {
         Double RSI = functions.calculateRSI(prices,period);
         model.addAttribute("RSI", RSI != null? RSI : "Not Available");
 
-        Double[] MACD = functions.calculateMACD(prices, 12, 26, 9); //TODO check
+        Double[] MACD = functions.calculateMACD(prices, 12, 26, 9);
 
         if (MACD == null || MACD[0] == null || MACD[1] == null) {
             model.addAttribute("MACD", "Not Available");
@@ -66,7 +66,7 @@ public class TechnicalAnalysis {
         Double HMA = functions.calculateHMA(prices,period);
         model.addAttribute("HMA", HMA != null? HMA : "Not Available");
 
-        Double[] Envelopes = functions.calculateEnvelopes(prices,period,50); //TODO check
+        Double[] Envelopes = functions.calculateEnvelopes(prices,period,2);
         if (Envelopes == null) {
             model.addAttribute("Envelopes", "Not Available");
         }else {
