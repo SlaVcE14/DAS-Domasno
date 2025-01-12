@@ -9,4 +9,8 @@ public interface IssuerService {
     List<String> getIssuers();
     Issuer getIssuer(String code);
     List<StockData> getStockData(Issuer issuer, String from, String to);
+    List<Double> getPrices(Issuer issuer);
+    List<Double> getMin(Issuer issuer);
+    List<Double> getMax(Issuer issuer);
+    Double getLastPrice(Issuer issuer);
 }
