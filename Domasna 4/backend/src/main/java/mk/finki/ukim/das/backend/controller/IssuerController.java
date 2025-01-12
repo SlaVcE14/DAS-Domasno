@@ -1,6 +1,7 @@
 package mk.finki.ukim.das.backend.controller;
 
 import com.google.gson.Gson;
+import mk.finki.ukim.das.backend.functions.functions;
 import mk.finki.ukim.das.backend.model.Issuer;
 import mk.finki.ukim.das.backend.service.IssuerService;
 import org.springframework.web.bind.annotation.*;
@@ -42,6 +43,11 @@ public class IssuerController {
 
         Issuer issuer = issuerService.getIssuer(code);
         return new Gson().toJson(issuerService.getStockData(issuer, fromDateParam, toDateParam));
+    }
+
+    @GetMapping("/{code}/lastPrice")
+    public String getIssuerLastPrice(@PathVariable String code){
+        return new Gson().toJson(functions.getLastPrice(issuerService.getIssuer(code)));
     }
 
 }

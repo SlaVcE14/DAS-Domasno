@@ -5,7 +5,6 @@ import mk.finki.ukim.das.backend.functions.functions;
 import mk.finki.ukim.das.backend.model.Issuer;
 import mk.finki.ukim.das.backend.model.Signals;
 import mk.finki.ukim.das.backend.service.IssuerService;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,12 +21,8 @@ public class TechnicalAnalysis {
 
 
     @GetMapping("/{code}")
-    public String getIssuer(@PathVariable String code, @RequestParam(name = "period",required = false) String periodStr, Model model) {
-
-        model.addAttribute("issuers",issuerService.getIssuers());
+    public String getIssuer(@PathVariable String code, @RequestParam(name = "period",required = false) String periodStr) {
         Issuer issuer = issuerService.getIssuer(code);
-        model.addAttribute("selectedIssuer",issuer);
-
         int period = (periodStr != null)?Integer.parseInt(periodStr):1;
 
         List<Double> prices = functions.getPrices(issuer);
