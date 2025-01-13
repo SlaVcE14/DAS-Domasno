@@ -16,9 +16,12 @@ public class IssuerRepository {
     List<Issuer> issuers;
 
     public IssuerRepository() {
-        issuers = FileSystem.ReadData();
+        updateRepository();
     }
 
+    public void updateRepository(){
+        issuers = FileSystem.ReadData();
+    }
 
     public List<String> getIssuers() {
         return issuers.stream().map(Issuer::getCode).toList();

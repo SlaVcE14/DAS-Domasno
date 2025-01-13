@@ -25,9 +25,9 @@ public class TechnicalAnalysis {
         Issuer issuer = issuerService.getIssuer(code);
         int period = (periodStr != null)?Integer.parseInt(periodStr):1;
 
-        List<Double> prices = functions.getPrices(issuer);
-        List<Double> minPrices = functions.getMin(issuer);
-        List<Double> maxPrices = functions.getMax(issuer);
+        List<Double> prices = issuerService.getPrices(issuer);
+        List<Double> minPrices = issuerService.getMin(issuer);
+        List<Double> maxPrices = issuerService.getMax(issuer);
 
         Signals signals = new Signals();
 
@@ -48,7 +48,7 @@ public class TechnicalAnalysis {
         String cciSignal = functions.getCCISignal(signals.getCCI());
         String MomentumSignal = functions.getMomentumSignal(signals.getMomentum());
 
-        Double lastPrice = functions.getLastPrice(issuer);
+        Double lastPrice = issuerService.getLastPrice(issuer);
 
         String SMASignal = functions.getSMASignal(lastPrice,signals.getSMA());
         String EMASignal = functions.getEMASignal(lastPrice,signals.getEMA());

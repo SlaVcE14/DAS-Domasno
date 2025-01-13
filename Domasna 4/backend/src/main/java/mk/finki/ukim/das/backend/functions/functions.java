@@ -1,8 +1,5 @@
 package mk.finki.ukim.das.backend.functions;
 
-import mk.finki.ukim.das.backend.model.Issuer;
-import mk.finki.ukim.das.backend.model.StockData;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,72 +13,6 @@ public class functions {
         DecimalFormat format = new DecimalFormat("#.##");
         return Double.valueOf(format.format(d));
     }
-
-    public static double calculateOscillation(double currentPrice, double previousPrice) {
-        if (previousPrice == 0) return 0;
-        return ((currentPrice - previousPrice) / previousPrice) * 100;
-    }
-
-
-    public static List<Double> getPrices(Issuer issuer){
-        List<Double> prices = new ArrayList<>();
-        for (StockData data : issuer.getStockDataList()){
-            String price = data.getLastTransactionPrice();
-            if (price == null || price.isEmpty()) {
-                continue;
-            }
-
-            price = price.replaceAll("\\.","").replaceAll(",",".");
-
-            prices.add(Double.valueOf(price));
-        }
-        return prices;
-    }
-
-    //TODO refactor this!!
-
-    public static List<Double> getMin(Issuer issuer){
-        List<Double> prices = new ArrayList<>();
-        for (StockData data : issuer.getStockDataList()){
-            String price = data.getMinPrice();
-            if (price.isEmpty()) {
-                price = data.getLastTransactionPrice();
-            }
-            if (price == null || price.isEmpty()) {
-                continue;
-            }
-
-            price = price.replaceAll("\\.","").replaceAll(",",".");
-
-            prices.add(Double.valueOf(price));
-        }
-        return prices;
-    }
-
-    public static List<Double> getMax(Issuer issuer){
-        List<Double> prices = new ArrayList<>();
-        for (StockData data : issuer.getStockDataList()){
-            String price = data.getMaxPrice();
-            if (price.isEmpty()) {
-                price = data.getLastTransactionPrice();
-            }
-            if (price == null || price.isEmpty()) {
-                continue;
-            }
-
-            price = price.replaceAll("\\.","").replaceAll(",",".");
-
-            prices.add(Double.valueOf(price));
-        }
-        return prices;
-    }
-
-    public static Double getLastPrice(Issuer issuer){
-        List<Double> prices = getPrices(issuer);
-        if (prices.isEmpty()) return null;
-        return prices.get(0);
-    }
-
 
     //RSI
     public static Double calculateRSI(List<Double> closingPrices, int period) {
@@ -102,8 +33,6 @@ public class functions {
         return round(100 - (100 / (1 + rs)));
     }
 
-
-
     //MACD
     public static Double[] calculateMACD(List<Double> closingPrices, int shortPeriod, int longPeriod, int signalPeriod) {
         if (closingPrices == null || closingPrices.size() < longPeriod || closingPrices.contains(null)) {
@@ -122,9 +51,6 @@ public class functions {
         Double signalLine = calculateEMA(macdLineValues, signalPeriod);
         return new Double[]{round(macdLine), round(signalLine)};
     }
-
-
-
 
     //Stochastic Oscillator
     public static Double calculateStochastic(List<Double> closingPrices, List<Double> highs, List<Double> lows, int period) {
@@ -298,34 +224,28 @@ public class functions {
         return "Hold";
     }
 
+    private static String getSignal(Double lastPrice, Double val) {
+        if (lastPrice == null || val == null) return null;
+        if (lastPrice > val) return "Buy";
+        if (lastPrice < val) return "Sell";
+        return "Hold";
+    }
 
     public static String getSMASignal(Double lastPrice, Double sma) {
-        if (lastPrice == null || sma == null) return null;
-        if (lastPrice > sma) return "Buy";
-        if (lastPrice < sma) return "Sell";
-        return "Hold";
+        return getSignal(lastPrice, sma);
     }
 
     public static String getEMASignal(Double lastPrice, Double ema) {
-        if (lastPrice == null || ema == null) return null;
-        if (lastPrice > ema) return "Buy";
-        if (lastPrice < ema) return "Sell";
-        return "Hold";
+        return getSignal(lastPrice, ema);
     }
 
     public static String getWMASignal(Double lastPrice, Double wma) {
-        if (lastPrice == null || wma == null) return null;
-        if (lastPrice > wma) return "Buy";
-        if (lastPrice < wma) return "Sell";
-        return "Hold";
+        return getSignal(lastPrice, wma);
     }
 
 
     public static String getHMASignal(Double lastPrice, Double hma) {
-        if (lastPrice == null || hma == null) return null;
-        if (lastPrice > hma) return "Buy";
-        if (lastPrice < hma) return "Sell";
-        return "Hold";
+        return getSignal(lastPrice, hma);
     }
 
     public static String getMAESignal(Double lastPrice, Double[] mae) {
