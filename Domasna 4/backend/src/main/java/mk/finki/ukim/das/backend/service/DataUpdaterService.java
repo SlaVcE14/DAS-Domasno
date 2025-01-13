@@ -1,6 +1,7 @@
 package mk.finki.ukim.das.backend.service;
 
 import mk.finki.ukim.das.backend.repository.IssuerRepository;
+import org.springframework.core.env.Environment;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -11,17 +12,18 @@ import java.util.concurrent.Executors;
 @Service
 public class DataUpdaterService {
 
+    private final String SCRAPER_FILE;
     public final IssuerRepository repository;
 
-    public DataUpdaterService(IssuerRepository repository) {
+    public DataUpdaterService(IssuerRepository repository, Environment environment) {
         this.repository = repository;
+        SCRAPER_FILE = environment.getProperty("DATASCRAPER_JAR_PATH", "../DataScraper/datascraper.jar");
     }
 
 
     @Scheduled(fixedRate = 86400000)
     public void updateData(){
-        String updaterJarPath = "../DataScraper/datascraper.jar";
-        ProcessBuilder processBuilder = new ProcessBuilder("java", "-jar", updaterJarPath);
+        ProcessBuilder processBuilder = new ProcessBuilder("java", "-jar", SCRAPER_FILE);
 
         processBuilder.redirectErrorStream(true);
 

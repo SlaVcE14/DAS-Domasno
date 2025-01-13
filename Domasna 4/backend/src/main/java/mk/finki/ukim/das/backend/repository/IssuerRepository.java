@@ -3,6 +3,7 @@ package mk.finki.ukim.das.backend.repository;
 import mk.finki.ukim.das.backend.database.FileSystem;
 import mk.finki.ukim.das.backend.model.Issuer;
 import mk.finki.ukim.das.backend.model.StockData;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
@@ -13,14 +14,16 @@ import java.util.List;
 @Repository
 public class IssuerRepository {
 
+    private final Environment environment;
     List<Issuer> issuers;
 
-    public IssuerRepository() {
+    public IssuerRepository(Environment environment) {
+        this.environment = environment;
         updateRepository();
     }
 
     public void updateRepository(){
-        issuers = FileSystem.ReadData();
+        issuers = FileSystem.ReadData(environment);
     }
 
     public List<String> getIssuers() {

@@ -1,0 +1,40 @@
+version: "3.3"
+services:
+  database:
+    image: alpine
+    container_name: database
+    volumes:
+      - ./database:/database
+    command: tail -f /dev/null
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    volumes:
+      - ./database/data.json:/app/database/data.json
+      - ./DataScraper/datascraper.jar:/app/datascraper/datascraper.jar
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+    environment:
+      DATABASE_PATH: "/app/database"
+      DATASCRAPER_JAR_PATH: "/app/datascraper/datascraper.jar"
+    depends_on:
+      - database
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "5000:9090"
+    networks:
+      - app-network
+    environment:
+      API_URL: "http://backend:8080/api/"
+      
+networks:
+  app-network:
+    driver: bridge

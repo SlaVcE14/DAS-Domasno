@@ -28,7 +28,7 @@ public class Main {
     public static final String URL = "https://www.mse.mk/mk/stats/symbolhistory/";
     public static final String URL_CODES = "https://www.mse.mk/en/stats/current-schedule";
     public static final String FILE_NAME = "data.json";
-    public static final String DATABASE_LOCATION = "../database";
+    public static final String DATABASE_LOCATION = System.getenv().getOrDefault("DATABASE_PATH","../database");
 
     List<Issuer> issuers = new ArrayList<>();
 

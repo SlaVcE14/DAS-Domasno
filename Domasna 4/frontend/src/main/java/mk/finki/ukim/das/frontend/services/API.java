@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import mk.finki.ukim.das.frontend.model.Signals;
 import mk.finki.ukim.das.frontend.model.StockData;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -15,8 +16,11 @@ import java.util.List;
 public class API {
 
     private final RestTemplate restTemplate = new RestTemplate();
-    private final String apiUrl = "http://localhost:8080/api/";
+    private final String apiUrl;
 
+    public API(Environment environment) {
+        apiUrl = environment.getProperty("API_URL","http://localhost:8080/api/");
+    }
 
     public List<String> getIssuers(){
         String data = restTemplate.getForObject(apiUrl + "/issuers",String.class);
