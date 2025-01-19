@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * This class contains every functions needed for calculating signals
+ * */
 public class functions {
 
     private static Double round(Double d){
