@@ -1,5 +1,6 @@
 package mk.finki.ukim.das.backend.repository;
 
+import jakarta.annotation.PostConstruct;
 import mk.finki.ukim.das.backend.database.FileSystem;
 import mk.finki.ukim.das.backend.model.Issuer;
 import mk.finki.ukim.das.backend.model.StockData;
@@ -14,16 +15,15 @@ import java.util.List;
 @Repository
 public class IssuerRepository {
 
-    private final Environment environment;
     List<Issuer> issuers;
 
     public IssuerRepository(Environment environment) {
-        this.environment = environment;
-        updateRepository();
+        FileSystem.init(environment);
     }
 
+    @PostConstruct
     public void updateRepository(){
-        issuers = FileSystem.ReadData(environment);
+        issuers = FileSystem.getInstance().ReadData();
     }
 
     public List<String> getIssuers() {

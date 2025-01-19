@@ -2,6 +2,7 @@ package mk.finki.ukim.das.backend.database;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import lombok.Getter;
 import mk.finki.ukim.das.backend.model.Issuer;
 import org.springframework.core.env.Environment;
 
@@ -14,10 +15,24 @@ import java.util.List;
 
 public class FileSystem {
 
-    public static final String FILE_NAME = "data.json";
+    private static final String FILE_NAME = "data.json";
+    private final String DATABASE_LOCATION;
 
-    public static List<Issuer> ReadData(Environment environment){
-        String DATABASE_LOCATION = environment.getProperty("DATABASE_PATH","../database");
+    @Getter
+    private static FileSystem instance;
+
+    private FileSystem(Environment environment) {
+        DATABASE_LOCATION = environment.getProperty("DATABASE_PATH","../database");
+    }
+
+    public static void init(Environment environment){
+        if (instance == null) {
+            instance = new FileSystem(environment);
+        }
+    }
+
+    public List<Issuer> ReadData(){
+
         try {
             BufferedReader reader = new BufferedReader(new FileReader(DATABASE_LOCATION + "/" + FILE_NAME));
             StringBuilder builder = new StringBuilder();
