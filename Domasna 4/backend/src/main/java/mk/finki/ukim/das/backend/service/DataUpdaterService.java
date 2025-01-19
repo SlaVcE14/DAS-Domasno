@@ -9,6 +9,9 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.concurrent.Executors;
 
+/**
+ * This service is for updating the database
+ * */
 @Service
 public class DataUpdaterService {
 
@@ -20,7 +23,9 @@ public class DataUpdaterService {
         SCRAPER_FILE = environment.getProperty("DATASCRAPER_JAR_PATH", "../DataScraper/datascraper.jar");
     }
 
-
+    /**
+     * In every 24h, this functions runs and executes the datascraper.jar file for scraping and saving new data to the database
+     * */
     @Scheduled(fixedRate = 86400000)
     public void updateData(){
         ProcessBuilder processBuilder = new ProcessBuilder("java", "-jar", SCRAPER_FILE);
