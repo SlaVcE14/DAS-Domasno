@@ -6,6 +6,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.io.InputStreamReader;
 import java.util.concurrent.Executors;
 
@@ -17,6 +19,8 @@ public class DataUpdaterService {
 
     private final String SCRAPER_FILE;
     public final IssuerRepository repository;
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	    
 
     public DataUpdaterService(IssuerRepository repository, Environment environment) {
         this.repository = repository;
@@ -47,6 +51,7 @@ public class DataUpdaterService {
             });
 
             process.waitFor();
+	    System.out.println("update finished: " + LocalDateTime.now().format(formatter));
             repository.updateRepository();
 
         }catch (Exception e){
